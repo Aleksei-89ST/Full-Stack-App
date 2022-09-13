@@ -1,11 +1,13 @@
 import express from "express";
 import mongoose from "mongoose";
-import jwt from "jsonwebtoken";
-// bcrypt - это библиотека позволяет шифровать пароль с фронтенда
-import bcrypt from "bcrypt";
-import { registerValidation } from "./validation/auth.js";
-import { validationResult } from "express-validator";
-import UserModel from "./models/User.js";
+import {
+  registerValidation,
+  loginValidation,
+  postCreateValidation,
+} from "./validation.js";
+import checkAuth from "./utils/checkAuth.js";
+import * as UserController from "./controllers/UserController.js";
+import * as PostController from "./controllers/PostController.js";
 
 // эта библиотека позволяет работать с MONGODB
 mongoose
@@ -15,57 +17,21 @@ mongoose
   .then(() => console.log("DB OK"))
   .catch((err) => console.log("DB ERROR", err));
 
+// express будет хранится в app
 const app = express();
 
 // позволит читать JSON в запросах
 app.use(express.json());
 
 // авторизация
-app.post("/auth/register", registerValidation, async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json(errors.array());
-    }
+app.post("/auth/login", loginValidation, UserController.login);
+// регистрация
+app.post("/auth/register", registerValidation, UserController.register);
+// проверка моих данных
+app.get("/auth/me", checkAuth, UserController.getMe);
+app.post("/posts", checkAuth, postCreateValidation, PostController.create);
 
-    const password = req.body.password;
-    const salt = await bcrypt.genSalt(10);
-    // отличный способ шифрования пароля ------>>>>>>> SALT-АЛГОРИТМ ШИФРОВАНИЯ
-    const passwordHash = await bcrypt.hash(password, salt);
-
-    // документ на создания нового пользователя
-    const doc = new UserModel({
-      email: req.body.email,
-      fullName: req.body.fullName,
-      avatarUrl: req.body.avatarUrl,
-      passwordHash,
-    });
-
-    // создаю самого пользователя в mongodb
-    const user = await doc.save();
-
-    const token = jwt.sign(
-      {
-        _id: user._id,
-      },
-      "secret123",
-      {
-        expiresIn: "30d",
-      }
-    );
-
-    res.json({ ...user, token });
-  } catch (error) {
-    // это храню для себя
-    console.log(error);
-    //ЭТО ДЛЯ ПОЛЬЗОВАТЕЛЯ-пришёл ответ ввиде ошибке и вот ифа о ошибке
-    res.status(500).json({
-      message: "Не удалось зарегистрироваться",
-    });
-  }
-});
-
-// обьясняю на какой порт прикрепить app - можно указать лбой ВТОРОЙ ПАРАМЕТР функция - если произошла ошибка
+// обьясняю на какой порт прикрепить app - можно указать лЮбой ВТОРОЙ ПАРАМЕТР функция - если произошла ошибка
 app.listen(4444, (err) => {
   if (err) {
     return console.log(err);
