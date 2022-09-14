@@ -1,16 +1,15 @@
 import express from "express";
 // библиотека для загрузки картинок на сервер
 import multer from "multer";
+import cors from "cors";
 import mongoose from "mongoose";
 import {
   registerValidation,
   loginValidation,
   postCreateValidation,
 } from "./validation.js";
-import checkAuth from "./utils/checkAuth.js";
-import * as UserController from "./controllers/UserController.js";
-import * as PostController from "./controllers/PostController.js";
-import handleErrors from "./utils/handleErrors.js";
+import { UserController, PostController } from "./controllers/index.js";
+import { checkAuth, handleErrors } from "./utils/index.js";
 
 // эта библиотека позволяет работать с MONGODB
 mongoose
@@ -38,6 +37,8 @@ const upload = multer({ storage });
 
 // позволит читать JSON в запросах
 app.use(express.json());
+// позволяет убрать блокировку доменов
+app.use(cors());
 app.use("/uploads", express.static("uploads"));
 
 // авторизация
