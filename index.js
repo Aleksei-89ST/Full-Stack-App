@@ -54,14 +54,17 @@ app.post(
 app.get("/auth/me", checkAuth, UserController.getMe);
 
 // получение картинок
-app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
+app.post("/uploads", checkAuth, upload.single("image"), (req, res) => {
   res.json({
-    url: `/uploads/${req.file.originalname}`,
+    url: `/upload/${req.file.originalname}`,
   });
 });
-
+// получение одного тега
+app.get("/tags", PostController.getLastTags);
 // получение всех постов
 app.get("/posts", PostController.getAll);
+// получение всех тегов
+app.get("/posts/tags", PostController.getLastTags);
 // получение одного поста
 app.get("/posts/:id", PostController.getOne);
 // создание одного поста
