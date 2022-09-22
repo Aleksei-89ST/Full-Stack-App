@@ -13,9 +13,7 @@ import { checkAuth, handleErrors } from "./utils/index.js";
 
 // эта библиотека позволяет работать с MONGODB
 mongoose
-  .connect(
-    "mongodb+srv://fox:wwwwww@cluster0.wwxynyy.mongodb.net/blog?retryWrites=true&w=majority"
-  )
+  .connect( process.env.MONGODB_URI )
   .then(() => console.log("DB OK"))
   .catch((err) => console.log("DB ERROR", err));
 
@@ -87,7 +85,7 @@ app.patch(
 );
 
 // обьясняю на какой порт прикрепить app - можно указать лЮбой ВТОРОЙ ПАРАМЕТР функция - если произошла ошибка
-app.listen(4444, (err) => {
+app.listen(process.env.PORT || 4444 , (err) => {
   if (err) {
     return console.log(err);
   }
