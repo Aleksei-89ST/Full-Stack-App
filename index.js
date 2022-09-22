@@ -54,9 +54,9 @@ app.post(
 app.get("/auth/me", checkAuth, UserController.getMe);
 
 // получение картинок
-app.post("/uploads", checkAuth, upload.single("image"), (req, res) => {
+app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
   res.json({
-    url: `/upload/${req.file.originalname}`,
+    url: `/uploads/${req.file.originalname}`,
   });
 });
 // получение одного тега

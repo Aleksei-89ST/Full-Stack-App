@@ -26,7 +26,7 @@ export const register = async (req, res) => {
       },
       "secret123",
       {
-        expiresIn: "30d",
+        expiresIn: "100d",
       }
     );
 
@@ -66,7 +66,7 @@ export const login = async (req, res) => {
       },
       "secret123",
       {
-        expiresIn: "30d",
+        expiresIn: "60d",
       }
     );
 
