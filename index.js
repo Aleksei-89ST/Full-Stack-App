@@ -13,9 +13,7 @@ import { checkAuth, handleErrors } from "./utils/index.js";
 
 // эта библиотека позволяет работать с MONGODB
 mongoose
-  .connect(
-    "mongodb+srv://fox:wwwwww@cluster0.wwxynyy.mongodb.net/blog?retryWrites=true&w=majority"
-  )
+  .connect("mongodb+srv://fox:wwwwww@cluster0.wwxynyy.mongodb.net/blog?retryWrites=true&w=majority")
   .then(() => console.log("DB OK"))
   .catch((err) => console.log("DB ERROR", err));
 
@@ -54,9 +52,9 @@ app.post(
 app.get("/auth/me", checkAuth, UserController.getMe);
 
 // получение картинок
-app.post("/uploads", checkAuth, upload.single("image"), (req, res) => {
+app.post("/upload", checkAuth, upload.single("image"), (req, res) => {
   res.json({
-    url: `/upload/${req.file.originalname}`,
+    url: `/uploads/${req.file.originalname}`,
   });
 });
 // получение одного тега
